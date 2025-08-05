@@ -5,6 +5,7 @@ export async function notRegistrationMessage(
   userId: number,
   referrerId?: number,
 ): Promise<void> {
+  if (referrerId === undefined) return;
   await sendMessage(userId, t('Сообщение о регистрации'), {
     inline_keyboard: [
       [

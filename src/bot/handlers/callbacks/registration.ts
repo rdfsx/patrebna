@@ -21,6 +21,11 @@ export async function handleRegistration(
   const isRegistred = await db.getUser(chatId);
 
   if (!isRegistred) {
+    const adminId = Number(process.env.ADMIN);
+    if (callbackData?.param !== adminId) {
+      if (messageId) await deleteMessage(chatId, messageId, callbackQueryId);
+      return;
+    }
     const lockKey = `registering:${chatId}`;
     const isLocked = await cache.setCacheNotExists(lockKey, true);
     if (!isLocked) {

@@ -8,6 +8,7 @@ import help from 'bot/commands/help';
 import profile from 'bot/commands/profile';
 import observe from 'bot/commands/observe';
 import language from 'bot/commands/language';
+import referral from 'bot/commands/referral';
 import { getUserLanguage } from 'config/lib/helpers/cacheLaguage';
 import { type ICallbackData } from 'config/types';
 import { handleRegistration } from 'bot/handlers/callbacks/registration';
@@ -36,6 +37,8 @@ export default async (): Promise<void> => {
     }
     const chatId = from.id;
     const messageId = message?.message_id;
+    const isRegistered = await db.getUser(chatId);
+    if (!isRegistered && callbackData.action !== 'registration') return;
     const language = await getUserLanguage(chatId);
     switch (callbackData.action) {
       case 'registration': {
@@ -193,4 +196,5 @@ export default async (): Promise<void> => {
   profile();
   observe();
   language();
+  referral();
 };
