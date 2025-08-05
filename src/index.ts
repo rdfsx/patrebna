@@ -7,42 +7,21 @@ import {
   type IAd,
   type IParserData,
   type IProcessMessage,
-  StatusPremium,
   UserActions,
 } from 'config/types';
 import { getUserIds } from 'config/lib/helpers/getUserIds';
 import { sendMessage } from 'config/lib/helpers/sendMessage';
 import { getUser } from 'config/lib/helpers/getUser';
-import { notificationOfExpiredPremium } from 'config/lib/helpers/notificationOfExpiredPremium';
 
 import keyboard from 'bot/keyboard';
 import path from 'path';
 import { notificationOfNewAds } from 'config/lib/helpers/notificationOfNewAds';
 
 void (async () => {
-  void scheduleParsing(
-    '2/30 * * * *',
-    (user) => user.status !== StatusPremium.ACTIVE,
-  );
-  void scheduleParsing(
-    '*/5 * * * *',
-    (user) => user.status === StatusPremium.ACTIVE,
-  );
+  void scheduleParsing('*/5 * * * *', () => true);
 
   scheduleJob('0 0 * * *', async () => {
     await db.clearExpiredAdReferences();
-    const expiredUserIds = await db.expirePremium();
-    if (expiredUserIds.length) {
-      for (const id of expiredUserIds) {
-        await notificationOfExpiredPremium(id, t('Подписка уже закончилась'));
-      }
-    }
-    const expiredUserSoonIds = await db.expirePremiumSoon();
-    if (expiredUserSoonIds.length) {
-      for (const id of expiredUserSoonIds) {
-        await notificationOfExpiredPremium(id, t('Подписка скоро закончится'));
-      }
-    }
   });
   scheduleJob('0 0 * * 0', async () => {
     await handleInactiveUsers(UserActions.REMOVE);
@@ -81,7 +60,7 @@ async function handleInactiveUsers(action: UserActions): Promise<void> {
 
 async function scheduleParsing(
   cronTime: string,
-  filterFn: (user: { userId: number; status: StatusPremium }) => boolean,
+  filterFn: (user: { userId: number }) => boolean,
 ): Promise<void> {
   scheduleJob(cronTime, async () => {
     const userIds = await getUserIds();

@@ -7,22 +7,15 @@ import start from 'bot/commands/start';
 import help from 'bot/commands/help';
 import profile from 'bot/commands/profile';
 import observe from 'bot/commands/observe';
-import premium from 'bot/commands/premium';
 import language from 'bot/commands/language';
 import { getUserLanguage } from 'config/lib/helpers/cacheLaguage';
 import { type ICallbackData } from 'config/types';
 import { handleRegistration } from 'bot/handlers/callbacks/registration';
 import { handleAddLinkKufar } from 'bot/handlers/callbacks/addLinkKufar';
 import { handleChangeLanguage } from 'bot/handlers/callbacks/changeLanguage';
-import { handleChooseTariff } from 'bot/handlers/callbacks/chooseTariff';
-import { handleBuyPremium } from 'bot/handlers/callbacks/buyPremium';
 import { handleObserveKufar } from 'bot/handlers/callbacks/observeKufar';
 import { handleChangeUrlStatus } from 'bot/handlers/callbacks/changeUrlStatus';
 import { handleWrapperForLink } from 'bot/handlers/callbacks/wrapperForLink';
-import { handleGetFreePremium } from 'bot/handlers/callbacks/getFreePremium';
-import { handleSubscribeToChannel } from 'bot/handlers/callbacks/subscribeToChannel';
-import { handleChekOnSubscribeToChannel } from 'bot/handlers/callbacks/checkOnSubscribeToChannel';
-import { handleInviteReferral } from 'bot/handlers/callbacks/inviteReferral';
 import { handleOpenQuestionFaq } from 'bot/handlers/callbacks/openQuestionFaq';
 import { editMessage } from 'config/lib/helpers/editMessage';
 import { sendMessage } from 'config/lib/helpers/sendMessage';
@@ -95,39 +88,6 @@ export default async (): Promise<void> => {
           chatId,
           messageId,
           callbackData,
-          callbackQueryId,
-        );
-        break;
-      }
-      case 'buy_premium': {
-        await handleBuyPremium(chatId, messageId, callbackQueryId);
-        break;
-      }
-      case 'choose_tariff': {
-        await handleChooseTariff(
-          chatId,
-          messageId,
-          callbackData,
-          callbackQueryId,
-        );
-        break;
-      }
-      case 'get_free_premium': {
-        await handleGetFreePremium(chatId, messageId, callbackQueryId);
-        break;
-      }
-      case 'subscribe_channel': {
-        await handleSubscribeToChannel(chatId, messageId, callbackQueryId);
-        break;
-      }
-      case 'invite_referral': {
-        await handleInviteReferral(chatId, messageId, callbackQueryId);
-        break;
-      }
-      case 'check_on_subscribe_channel': {
-        await handleChekOnSubscribeToChannel(
-          chatId,
-          messageId,
           callbackQueryId,
         );
         break;
@@ -214,17 +174,6 @@ export default async (): Promise<void> => {
         );
         break;
       }
-      case 'back_premium': {
-        await i18next.changeLanguage(language);
-        await editMessage(
-          chatId,
-          messageId,
-          t('Описание подписки'),
-          callbackQueryId,
-          keyboard.Premium(),
-        );
-        break;
-      }
       case 'back_faq': {
         await i18next.changeLanguage(language);
         await editMessage(
@@ -243,6 +192,5 @@ export default async (): Promise<void> => {
   help();
   profile();
   observe();
-  premium();
   language();
 };

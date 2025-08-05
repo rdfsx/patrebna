@@ -9,8 +9,7 @@
   <img src="https://img.shields.io/badge/DB-Mongodb-%233fa037" alt="Database">
   <img src="https://img.shields.io/badge/Cache-Redis-%23a41e11" alt="Cache">
    <img src="https://img.shields.io/badge/Languages-2-%23ebab00" alt="Languages">
-   <img src="https://img.shields.io/badge/Payment-bePaid-%23ff8e09" alt="Payment">
-   <img src="https://img.shields.io/badge/Version-v4.0.2-%2300ad64" alt="App Version">
+  <img src="https://img.shields.io/badge/Version-v4.0.2-%2300ad64" alt="App Version">
    <img src="https://img.shields.io/badge/License-MIT-%23a31f34" alt="License">
 </p>
 
@@ -40,9 +39,8 @@
 ## Дополнительная информация
 
 - Бот - мультиязычный и поддерживает два языка (русский и белорусский).
-- К боту можно подключить оплату подписки через bePaid.
-- По умолчанию проверка наличия новых объявлений выполняется раз в 24 минут, в подписке раз в 6 минут.
-- В базовой версии можно добавить только одну ссылку для отслеживания, в премиум версии - 3 ссылки.
+- Проверка наличия новых объявлений выполняется каждые 5 минут.
+- Можно добавить до трех ссылок для отслеживания.
 - Директория **.github** нужна только для разработки и деплоя на сервер (ее можно удалить).
 
 ## Разработчик
