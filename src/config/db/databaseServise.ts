@@ -87,8 +87,7 @@ class DatabaseService {
   }
 
   async getDataPremium(id: number) {
-    const profile = await this.getProfile(id);
-    return await Premium.findOne({ _id: profile?.premium?._id }).lean();
+    return { status: StatusPremium.ACTIVE };
   }
 
   async expirePremium() {
@@ -171,32 +170,6 @@ class DatabaseService {
       .map((user) => user.id);
   }
 
-  async grantPremium(userId: number, days: number) {
-    const premium = await this.getDataPremium(userId);
-    const user = await getUser(userId);
-    const now = new Date();
-    const endDate =
-      premium?.end_date && premium.end_date > now
-        ? new Date(premium.end_date)
-        : now;
-    endDate.setDate(endDate.getDate() + days);
-
-    await Premium.findOneAndUpdate(
-      { _id: premium?._id },
-      {
-        status: StatusPremium.ACTIVE,
-        end_date: endDate,
-      },
-      { upsert: true, new: true },
-    );
-
-    await cache.setCache(
-      `user:${userId}`,
-      { ...user, status: StatusPremium.ACTIVE },
-      this.TTL,
-    );
-  }
-
   async rewardForChannelSubscription(userId: number) {
     const profile = await this.getProfile(userId);
     await Profile.updateMany(
@@ -208,7 +181,6 @@ class DatabaseService {
       { $addToSet: { userIdsSubscribedToChannel: userId } },
       { upsert: true },
     );
-    await this.grantPremium(userId, 7);
   }
 
   async isChannelSubscriptionRewarded(userId: number) {
@@ -491,12 +463,10 @@ class DatabaseService {
       alreadyRegisteredUserIds: userId,
     });
     if (activity) return;
-    const result = await Profile.updateOne(
+    await Profile.updateOne(
       { _id: profile?._id },
       { $addToSet: { referrals: userId } },
     );
-
-    if (result.matchedCount) await this.grantPremium(referrerId, 5);
   }
 
   async clearExpiredAdReferences() {

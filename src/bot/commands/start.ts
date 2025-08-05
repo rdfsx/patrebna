@@ -12,15 +12,17 @@ export default (): void => {
     void (async () => {
       const userId = ctx.chat.id;
       const payload = match?.[1] ?? null;
+      const adminId = Number(process.env.ADMIN);
       let referrerId: number | undefined;
       if (payload?.startsWith('ref')) {
         const parsed = Number(payload.slice(3));
-        if (!isNaN(parsed)) {
+        if (!isNaN(parsed) && parsed === adminId) {
           referrerId = parsed;
         }
       }
       await i18next.changeLanguage(await getUserLanguage(userId));
       const isRegistered = await db.getUser(userId);
+      if (!isRegistered && referrerId === undefined) return;
       await sendMessage(userId, t('Приветствие'), keyboard.Main());
       if (isRegistered) {
         await sendMessage(

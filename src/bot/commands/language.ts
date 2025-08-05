@@ -1,5 +1,6 @@
 import i18next, { t } from 'i18next';
 import { bot } from 'bot';
+import db from 'config/db/databaseServise';
 import { getUserLanguage } from 'config/lib/helpers/cacheLaguage';
 import { sendMessage } from 'config/lib/helpers/sendMessage';
 
@@ -8,6 +9,8 @@ export default (): void => {
   bot.onText(regex, (ctx) => {
     void (async () => {
       const userId = ctx.chat.id;
+      const isRegistered = await db.getUser(userId);
+      if (!isRegistered) return;
       await i18next.changeLanguage(await getUserLanguage(userId));
       await sendMessage(userId, t('Переключить язык приложения'), {
         inline_keyboard: [
